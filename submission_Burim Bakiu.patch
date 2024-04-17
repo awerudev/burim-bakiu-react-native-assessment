@@ -1,0 +1,1198 @@
+diff --git a/App.tsx b/App.tsx
+index f8b946d..aca43b8 100644
+--- a/App.tsx
++++ b/App.tsx
+@@ -1,13 +1,39 @@
+ import { StatusBar } from 'expo-status-bar';
++import { useFonts } from 'expo-font';
+ import { StyleSheet, Text, View } from 'react-native';
++import { useEffect } from "react";
++import { GestureHandlerRootView } from "react-native-gesture-handler";
++import AsyncStorage from '@react-native-async-storage/async-storage';
++
++import Route from "./src/navigation/main";
+ 
+ export default function App() {
+-    return (
+-        <View style={styles.container}>
+-            <Text>Open up App.tsx to start working on your app!</Text>
+-            <StatusBar style="auto" />
+-        </View>
+-    );
++
++  const initializeTimer = async (value) => {
++    try {
++      await AsyncStorage.setItem('user_spent_time', "0"); // Total Seconds
++    } catch (e) {
++      // saving error
++    }
++  };
++
++  useEffect(() => {
++    initializeTimer();
++  }, []);
++
++  const [ fontsLoaded ] = useFonts({
++    "SF-Pro-Rounded-Regular": require("./assets/fonts/SFProRounded/SF-Pro-Rounded-Regular.otf")
++  });
++
++  if (!fontsLoaded) {
++    return <Text>Loading...</Text>;
++  }  
++
++  return (
++    <GestureHandlerRootView style={{ flex: 1 }}>
++      <Route />
++    </GestureHandlerRootView>
++  );
+ }
+ 
+ const styles = StyleSheet.create({
+diff --git a/assets/activity.png b/assets/activity.png
+new file mode 100644
+index 0000000..f94274a
+Binary files /dev/null and b/assets/activity.png differ
+diff --git a/assets/arrow-right.png b/assets/arrow-right.png
+new file mode 100644
+index 0000000..32a9c5d
+Binary files /dev/null and b/assets/arrow-right.png differ
+diff --git a/assets/bookmark-action.png b/assets/bookmark-action.png
+new file mode 100644
+index 0000000..b225cec
+Binary files /dev/null and b/assets/bookmark-action.png differ
+diff --git a/assets/bookmark.png b/assets/bookmark.png
+new file mode 100644
+index 0000000..72015ae
+Binary files /dev/null and b/assets/bookmark.png differ
+diff --git a/assets/comment.png b/assets/comment.png
+new file mode 100644
+index 0000000..2b999d9
+Binary files /dev/null and b/assets/comment.png differ
+diff --git a/assets/discover.png b/assets/discover.png
+new file mode 100644
+index 0000000..49eacfa
+Binary files /dev/null and b/assets/discover.png differ
+diff --git a/assets/fonts/SFProRounded/SF-Pro-Rounded-Black.otf b/assets/fonts/SFProRounded/SF-Pro-Rounded-Black.otf
+new file mode 100644
+index 0000000..82855ff
+Binary files /dev/null and b/assets/fonts/SFProRounded/SF-Pro-Rounded-Black.otf differ
+diff --git a/assets/fonts/SFProRounded/SF-Pro-Rounded-Bold.otf b/assets/fonts/SFProRounded/SF-Pro-Rounded-Bold.otf
+new file mode 100644
+index 0000000..e834fc0
+Binary files /dev/null and b/assets/fonts/SFProRounded/SF-Pro-Rounded-Bold.otf differ
+diff --git a/assets/fonts/SFProRounded/SF-Pro-Rounded-Heavy.otf b/assets/fonts/SFProRounded/SF-Pro-Rounded-Heavy.otf
+new file mode 100644
+index 0000000..1149d8f
+Binary files /dev/null and b/assets/fonts/SFProRounded/SF-Pro-Rounded-Heavy.otf differ
+diff --git a/assets/fonts/SFProRounded/SF-Pro-Rounded-Light.otf b/assets/fonts/SFProRounded/SF-Pro-Rounded-Light.otf
+new file mode 100644
+index 0000000..55e810b
+Binary files /dev/null and b/assets/fonts/SFProRounded/SF-Pro-Rounded-Light.otf differ
+diff --git a/assets/fonts/SFProRounded/SF-Pro-Rounded-Medium.otf b/assets/fonts/SFProRounded/SF-Pro-Rounded-Medium.otf
+new file mode 100644
+index 0000000..57208a3
+Binary files /dev/null and b/assets/fonts/SFProRounded/SF-Pro-Rounded-Medium.otf differ
+diff --git a/assets/fonts/SFProRounded/SF-Pro-Rounded-Regular.otf b/assets/fonts/SFProRounded/SF-Pro-Rounded-Regular.otf
+new file mode 100644
+index 0000000..4abf9df
+Binary files /dev/null and b/assets/fonts/SFProRounded/SF-Pro-Rounded-Regular.otf differ
+diff --git a/assets/fonts/SFProRounded/SF-Pro-Rounded-Semibold.otf b/assets/fonts/SFProRounded/SF-Pro-Rounded-Semibold.otf
+new file mode 100644
+index 0000000..29d9bf7
+Binary files /dev/null and b/assets/fonts/SFProRounded/SF-Pro-Rounded-Semibold.otf differ
+diff --git a/assets/fonts/SFProRounded/SF-Pro-Rounded-Thin.otf b/assets/fonts/SFProRounded/SF-Pro-Rounded-Thin.otf
+new file mode 100644
+index 0000000..0e0776b
+Binary files /dev/null and b/assets/fonts/SFProRounded/SF-Pro-Rounded-Thin.otf differ
+diff --git a/assets/fonts/SFProRounded/SF-Pro-Rounded-Ultralight.otf b/assets/fonts/SFProRounded/SF-Pro-Rounded-Ultralight.otf
+new file mode 100644
+index 0000000..84c2084
+Binary files /dev/null and b/assets/fonts/SFProRounded/SF-Pro-Rounded-Ultralight.otf differ
+diff --git a/assets/heart.png b/assets/heart.png
+new file mode 100644
+index 0000000..f612a7b
+Binary files /dev/null and b/assets/heart.png differ
+diff --git a/assets/home.png b/assets/home.png
+new file mode 100644
+index 0000000..9c90b44
+Binary files /dev/null and b/assets/home.png differ
+diff --git a/assets/play-icon.png b/assets/play-icon.png
+new file mode 100644
+index 0000000..88711b5
+Binary files /dev/null and b/assets/play-icon.png differ
+diff --git a/assets/plus.png b/assets/plus.png
+new file mode 100644
+index 0000000..f8e3202
+Binary files /dev/null and b/assets/plus.png differ
+diff --git a/assets/profile.png b/assets/profile.png
+new file mode 100644
+index 0000000..f70e59d
+Binary files /dev/null and b/assets/profile.png differ
+diff --git a/assets/search.png b/assets/search.png
+new file mode 100644
+index 0000000..7bb76e4
+Binary files /dev/null and b/assets/search.png differ
+diff --git a/assets/share.png b/assets/share.png
+new file mode 100644
+index 0000000..1029797
+Binary files /dev/null and b/assets/share.png differ
+diff --git a/assets/timer.png b/assets/timer.png
+new file mode 100644
+index 0000000..d25a090
+Binary files /dev/null and b/assets/timer.png differ
+diff --git a/metro.config.js b/metro.config.js
+new file mode 100644
+index 0000000..bff131d
+--- /dev/null
++++ b/metro.config.js
+@@ -0,0 +1,32 @@
++// Learn more https://docs.expo.io/guides/customizing-metro
++const { getDefaultConfig } = require("@expo/metro-config");
++// const { getDefaultConfig, mergeConfig } = require('@react-native/metro-config');
++
++const defaultConfig = getDefaultConfig(__dirname);
++// defaultConfig.resolver.assetExts.filter((ext) => ext !== 'svg');
++// defaultConfig.resolver.assetExts.push(
++//   'svg'
++// );
++// defaultConfig.transformer.babelTransformerPath = require.resolve('react-native-svg-transformer');
++
++// defaultConfig.resolver.sourceExts.push("cjs");
++// const { assetExts, sourceExts } = defaultConfig.resolver;
++
++// /**
++//  * Metro configuration
++//  * https://facebook.github.io/metro/docs/configuration
++//  *
++//  * @type {import('metro-config').MetroConfig}
++//  */
++// const config = {
++//   transformer: {
++//     babelTransformerPath: require.resolve('react-native-svg-transformer'),
++//   },
++//   resolver: {
++//     assetExts: assetExts.filter((ext) => ext !== 'svg'),
++//     sourceExts: [...sourceExts, 'svg'],
++//   },
++// };
++
++// module.exports = mergeConfig(defaultConfig, config);
++module.exports = defaultConfig;
+diff --git a/package.json b/package.json
+index 7e7b288..e2653f4 100644
+--- a/package.json
++++ b/package.json
+@@ -1,28 +1,42 @@
+ {
+-    "name": "ws-eng-react-native-assessment",
+-    "version": "1.0.0",
+-    "main": "node_modules/expo/AppEntry.js",
+-    "scripts": {
+-        "start": "expo start",
+-        "android": "expo start --android",
+-        "ios": "expo start --ios",
+-        "web": "expo start --web",
+-        "format": "prettier --write .",
+-        "lint": "eslint ."
+-    },
+-    "dependencies": {
+-        "expo": "49.0.21",
+-        "expo-status-bar": "1.6.0",
+-        "react": "18.2.0",
+-        "react-native": "0.72.6"
+-    },
+-    "devDependencies": {
+-        "@babel/core": "7.23.5",
+-        "@types/react": "18.2.14",
+-        "eslint": "8.55.0",
+-        "eslint-config-universe": "12.0.0",
+-        "prettier": "3.1.0",
+-        "typescript": "5.1.3"
+-    },
+-    "private": true
++  "name": "ws-eng-react-native-assessment",
++  "version": "1.0.0",
++  "main": "node_modules/expo/AppEntry.js",
++  "scripts": {
++    "start": "expo start",
++    "android": "expo start --android",
++    "ios": "expo start --ios",
++    "web": "expo start --web",
++    "format": "prettier --write .",
++    "lint": "eslint ."
++  },
++  "dependencies": {
++    "@react-native-async-storage/async-storage": "1.18.2",
++    "@react-native/metro-config": "^0.75.0-main",
++    "@react-navigation/bottom-tabs": "^6.5.20",
++    "@react-navigation/material-bottom-tabs": "^6.2.28",
++    "@react-navigation/material-top-tabs": "^6.6.13",
++    "@react-navigation/native": "^6.1.17",
++    "@react-navigation/native-stack": "^6.9.26",
++    "expo": "49.0.21",
++    "expo-status-bar": "1.6.0",
++    "react": "18.2.0",
++    "react-native": "0.72.10",
++    "react-native-gesture-handler": "~2.12.0",
++    "react-native-paper": "^5.12.3",
++    "react-native-safe-area-context": "^4.6.3",
++    "react-native-screens": "~3.22.0",
++    "react-native-svg": "13.9.0",
++    "react-native-svg-transformer": "^1.3.0",
++    "react-native-vector-icons": "^10.0.3"
++  },
++  "devDependencies": {
++    "@babel/core": "7.23.5",
++    "@types/react": "18.2.14",
++    "eslint": "8.55.0",
++    "eslint-config-universe": "12.0.0",
++    "prettier": "3.1.0",
++    "typescript": "5.1.3"
++  },
++  "private": true
+ }
+diff --git a/src/components/post/index.tsx b/src/components/post/index.tsx
+new file mode 100644
+index 0000000..5435702
+--- /dev/null
++++ b/src/components/post/index.tsx
+@@ -0,0 +1,184 @@
++import { forwardRef, useEffect, useState } from "react";
++import { View, Text, TouchableOpacity, Image } from "react-native";
++import { Avatar } from "react-native-paper";
++import { Ionicons } from "@expo/vector-icons";
++
++import styles from "./styles";
++
++import { Post } from "../../../types";
++import { getAnswerById } from "../../services/post";
++
++
++export const PostSingle = forwardRef<{ item: Post }>(
++	({ item }, parentRef) => {
++    const [ correctOptions, setCorrectOptions ] = useState([]);
++    const [ selected, setSelected ] = useState(false);
++    const [ selectedOption, setSelectedOption ] = useState(null);
++
++		useEffect(() => {
++      getAnswerById(item.id)
++        .then((options) => {          
++          setCorrectOptions(options);
++        })
++        .catch((error) => {
++          console.log('getAnswerById error', error);
++        });
++    }, []);
++
++    const checkIfCorrect = (option) => {
++      for (let element of correctOptions) {
++        if (element.id === option.id) {
++          return true;
++        }
++      }
++      return false;
++    };
++
++    return (
++      <>
++        <View style={styles.overlay}>
++          <View style={styles.postContent}>
++            <View style={{ flex: 1 }}>
++              <View style={styles.questionWrapper}>
++                <Text style={styles.question}>
++                  {item.question}
++                </Text>
++              </View>
++
++              <View style={styles.optionWrapper}>              
++              </View>
++
++              {item.options && item.options.map((option, index) => {
++                return (
++                  <TouchableOpacity   
++                    key={index}                  
++                    onPress={() => {
++                      if (!selected) {
++                        setSelectedOption(option);
++                        setSelected(true);
++                      }                      
++                    }}
++                  >
++                    <View
++                      style={[styles.optionContent, 
++                        (selected && checkIfCorrect(option))? { backgroundColor: "#28B18FB0" } : 
++                        (selected && option.id === selectedOption.id && !checkIfCorrect(option)) ? { backgroundColor: "#DC5F5FB0" } : { backgroundColor: "#FFFFFF80" }]}
++                    >                      
++                      <Text style={styles.optionText}>{option.answer}</Text>
++                      { selected && option.id === selectedOption.id && (checkIfCorrect(option) ? (
++                        <Image
++                          style={[styles.optionStatus, {
++                            top: -5,
++                            bottom: 10,                            
++                          }]}
++                          source={require('../../../assets/correct.gif')}
++                        />
++                      ) : (
++                        <Image
++                          style={[styles.optionStatus, {
++                            top: 10,
++                            bottom: -5,
++                            transform: [{ rotate: '180deg' }],
++                          }]}
++                          source={require('../../../assets/wrong.gif')}
++                        />
++                      ))}                        
++                    </View>                    
++                  </TouchableOpacity>
++                )
++              })}
++
++              <Text style={styles.displayName}>{item.user.name}</Text>
++              <Text style={styles.description}>{item.description}</Text>              
++            </View>
++
++            <View style={styles.rightContainer}>
++              <TouchableOpacity
++                onPress={() => {}}
++              >
++                <View style={styles.avatarWrapper}>
++                  {item.user.avatar ? (
++                    <Image style={styles.avatar} source={{ uri: item.user.avatar }} />
++                  ) : (
++                    <Avatar.Icon
++                      style={styles.defaultAvatar}
++                      size={45}
++                      icon={"account"}
++                    />
++                  )}
++                  <Image style={styles.profilePlus} source={require('../../../assets/plus.png')} />
++                </View>
++              </TouchableOpacity>
++              <TouchableOpacity
++                style={styles.actionButton}
++                onPress={() => {}}
++              >
++                <Image
++                  style={styles.actionButtonImage}
++                  source={require('../../../assets/heart.png')}
++                />
++                <Text style={styles.actionButtonText}>
++                  87
++                </Text>
++              </TouchableOpacity>
++              <TouchableOpacity
++                style={styles.actionButton}
++                onPress={() => {}}
++              >
++                <Image
++                  style={styles.actionButtonImage}
++                  source={require('../../../assets/comment.png')}
++                />
++                <Text style={styles.actionButtonText}>
++                  2
++                </Text>
++              </TouchableOpacity>
++              <TouchableOpacity
++                style={styles.actionButton}
++                onPress={() => {}}
++              >
++                <Image
++                  style={styles.actionButtonImage}
++                  source={require('../../../assets/bookmark-action.png')}
++                />
++                <Text style={styles.actionButtonText}>
++                  203
++                </Text>
++              </TouchableOpacity>
++              <TouchableOpacity
++                style={styles.actionButton}
++                onPress={() => {}}
++              >
++                <Image
++                  style={styles.actionButtonImage}
++                  source={require('../../../assets/share.png')}
++                />
++                <Text style={styles.actionButtonText}>{17}</Text>
++              </TouchableOpacity>
++            </View>
++          </View>  
++
++          <View style={styles.postBottom}>
++            <Image style={styles.playlistIcon} source={require('../../../assets/play-icon.png')} />
++            <Text style={styles.playlist}>{`  ${item.playlist}`}</Text>
++            <Image 
++              style={styles.playlistArrow} 
++              resizeMode='contain'
++              source={require('../../../assets/arrow-right.png')} 
++            />
++          </View>
++        </View>
++
++        {/* Post Image */}
++        <Image 
++        	style={styles.container}
++        	source={{
++        		uri: item.image
++        	}}
++        />
++      </>
++    );
++	},
++);
++
++export default PostSingle;
+\ No newline at end of file
+diff --git a/src/components/post/styles.ts b/src/components/post/styles.ts
+new file mode 100644
+index 0000000..23bcfc5
+--- /dev/null
++++ b/src/components/post/styles.ts
+@@ -0,0 +1,143 @@
++import { Dimensions, StyleSheet } from "react-native";
++
++const styles = StyleSheet.create({
++  container: {
++    flex: 1,
++  },
++  overlay: {
++    width: Dimensions.get("window").width,
++    height: Dimensions.get("window").height - 220,
++    position: "absolute",
++    zIndex: 999,
++    bottom: 0,
++  },
++  postContent: {
++    flex: 1,
++    paddingLeft: 20,
++    paddingBottom: 20,
++    paddingRight: 10,
++    flexDirection: "row",
++    justifyContent: "space-between",
++    alignItems: "flex-end",    
++  },
++  postBottom: {
++    height: 35,
++    backgroundColor: "#161616",
++    display: "flex",
++    flexDirection: "row",
++    alignItems: "center",
++  },
++  questionWrapper: {
++    backgroundColor: "#000000AA",
++    padding: 8,
++    borderRadius: 10,
++  },
++  question: {
++    fontSize: 22,
++    fontWeight: "500",
++    color: "white", 
++    lineHeight: 32,   
++  },
++  optionWrapper: {
++    flex: 1,
++    justifyContent: "space-between",
++    marginBottom: 30,
++  },
++  optionContent: {
++    backgroundColor: "#FFFFFF80",
++    // backgroundColor: "#28B18FB0",
++    // backgroundColor: "#DC5F5FB0",
++    padding: 12,
++    borderRadius: 8,
++    marginTop: 8,
++    flexDirection: 'row',
++    alignItems: 'center',
++  },
++  optionText: {
++    marginRight: 50,
++    flex: 1,
++    fontSize: 17,
++    fontWeight: "500",
++    color: "white",
++    shadowColor: "black",
++    shadowRadius: 1,
++    shadowOpacity: 1,
++    shadowOffset: {
++      width: 1,
++      height: 1,
++    }
++  },
++  optionStatus: {
++    width: 45,
++    height: 45,    
++    position: 'absolute',
++    right: 4,    
++  },
++  displayName: {
++    color: "white",
++    fontWeight: "bold",
++    fontSize: 15,
++    marginTop: 24,
++  },
++  description: {
++    marginTop: 8,
++    color: "white",
++    fontSize: 13,
++  },
++  playlist: {
++    color: "white",
++    fontSize: 13,
++    fontFamily: "SF-Pro-Rounded-Regular",
++    flex: 1,
++  },
++  playlistIcon: {
++    width: 13,
++    height: 13,
++    marginLeft: 16,
++  },
++  playlistArrow: {
++    width: 13,
++    height: 13,
++    marginRight: 16,    
++  },
++  avatarWrapper: {
++    marginBottom: 16,
++  },
++  avatar: {
++    height: 45,
++    width: 45,
++    borderRadius: 25,
++    borderWidth: 2,
++    borderColor: "white",
++    marginBottom: 11,
++  },
++  defaultAvatar: {
++    marginBottom: 30,
++    borderRadius: 25,
++    borderWidth: 2,
++    borderColor: "white",
++  },
++  rightContainer: {
++    alignItems: "center",
++    marginLeft: 12,
++  },
++  actionButton: {
++    paddingBottom: 16,
++  },
++  actionButtonText: {
++    color: "white",
++    textAlign: "center",    
++  },
++  actionButtonImage: {
++    width: 30,
++    height: 30,
++  },
++  profilePlus: {
++    width: 22,
++    height: 22,
++    position: "absolute",
++    bottom: 0,
++    left: 11,
++  }
++});
++export default styles;
+diff --git a/src/navigation/home/index.tsx b/src/navigation/home/index.tsx
+new file mode 100644
+index 0000000..ca03ab7
+--- /dev/null
++++ b/src/navigation/home/index.tsx
+@@ -0,0 +1,111 @@
++import { Image } from "react-native";
++// import { createMaterialBottomTabNavigator } from "@react-navigation/material-bottom-tabs";
++import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
++import { Feather } from "@expo/vector-icons";
++import { StyleSheet } from "react-native";
++
++import FeedScreen from "../../screens/feed";
++import DiscoverScreen from "../../screens/discover";
++import ActivityScreen from "../../screens/activity";
++import BookmarkScreen from "../../screens/bookmark";
++import ProfileScreen from "../../screens/profile";
++
++export type HomeStackParamList = {
++  home: undefined;
++  discover: undefined;
++  activity: undefined;
++  bookmarks: undefined;
++  profile: undefined;
++};
++
++const Tab = createBottomTabNavigator();
++
++export default function HomeScreen() {
++  const styles = StyleSheet.create({
++    tabbarIcon: {
++      width: 22, 
++      height: 22,
++    },    
++  });
++  
++	return (
++    <Tab.Navigator
++      barStyle={{ backgroundColor: "black" }}
++      initialRouteName="Home"
++      screenOptions={{
++      	tabBarActiveTintColor: 'white',
++      	tabBarActiveBackgroundColor: 'black',
++      	tabBarInactiveBackgroundColor: 'black',
++      	tabBarStyle: {
++      		backgroundColor: 'black'
++      	},
++      }}
++    >
++      <Tab.Screen
++        name="Home"
++        component={FeedScreen}
++        options={{
++          headerShown: false,
++          tabBarIcon: ({ color }) => (
++            <Image
++              source={require('../../../assets/home.png')}
++              style={[styles.tabbarIcon, { tintColor: color }]}
++            />
++          ),
++        }}
++      />
++      <Tab.Screen
++        name="Discover"
++        component={DiscoverScreen}
++        options={{
++          headerShown: false,
++          tabBarIcon: ({ color }) => (
++            <Image
++              source={require('../../../assets/discover.png')}
++              style={[styles.tabbarIcon, { tintColor: color }]}
++            />
++          ),
++        }}
++      />
++      <Tab.Screen
++        name="Activity"
++        component={ActivityScreen}
++        options={{
++          headerShown: false,
++          tabBarIcon: ({ color }) => (
++            <Image
++              source={require('../../../assets/activity.png')}
++              style={[styles.tabbarIcon, { tintColor: color }]}
++            />
++          ),
++        }}
++      />
++      <Tab.Screen
++        name="Bookmarks"
++        component={BookmarkScreen}
++        options={{
++          headerShown: false,
++          tabBarIcon: ({ color }) => (
++            <Image
++              source={require('../../../assets/bookmark.png')}
++              style={[styles.tabbarIcon, { tintColor: color }]}
++            />
++          ),
++        }}
++      />
++      <Tab.Screen
++        name="Profile"
++        component={ProfileScreen}
++        options={{
++          headerShown: false,
++          tabBarIcon: ({ color }) => (
++            <Image
++              source={require('../../../assets/profile.png')}
++              style={[styles.tabbarIcon, { tintColor: color }]}
++            />
++          ),
++        }}
++      />
++    </Tab.Navigator>
++  );
++}
+diff --git a/src/navigation/main/index.tsx b/src/navigation/main/index.tsx
+new file mode 100644
+index 0000000..4f15c0a
+--- /dev/null
++++ b/src/navigation/main/index.tsx
+@@ -0,0 +1,32 @@
++import React, { useEffect } from "react";
++import { NavigationContainer } from "@react-navigation/native";
++import { createNativeStackNavigator } from "@react-navigation/native-stack";
++import { View } from "react-native";
++
++import HomeScreen from "../home";
++
++
++export type RootStackParamList = {
++  content: undefined; 
++};
++
++const Stack = createNativeStackNavigator<RootStackParamList>();
++
++export default function Route() {  
++
++  useEffect(() => {    
++
++  }, []);
++
++  return (
++    <NavigationContainer>
++      <Stack.Navigator>
++        <Stack.Screen
++          name="home"
++          component={HomeScreen}
++          options={{ headerShown: false }}
++        />
++      </Stack.Navigator>
++    </NavigationContainer>
++  );
++}
+diff --git a/src/screens/activity/index.tsx b/src/screens/activity/index.tsx
+new file mode 100644
+index 0000000..779eee1
+--- /dev/null
++++ b/src/screens/activity/index.tsx
+@@ -0,0 +1,17 @@
++import { View, Text } from "react-native";
++import { useContext, useEffect, useRef, useState } from "react";
++
++
++import styles from "./styles";
++
++export default function ActivityScreen() {
++  useEffect(() => {
++    
++  }, []);
++
++  return (
++  	<View style={styles.container}>
++  		<Text>Activity</Text>
++  	</View>
++  );
++}
+\ No newline at end of file
+diff --git a/src/screens/activity/styles.ts b/src/screens/activity/styles.ts
+new file mode 100644
+index 0000000..09be1bc
+--- /dev/null
++++ b/src/screens/activity/styles.ts
+@@ -0,0 +1,13 @@
++import { StyleSheet } from "react-native";
++
++const styles = StyleSheet.create({
++  container: { 
++    flex: 1,
++    display: 'flex',
++    justifyContent: 'center',
++    alignItems: 'center',
++    backgroundColor: 'black',
++  },
++});
++
++export default styles;
+diff --git a/src/screens/bookmark/index.tsx b/src/screens/bookmark/index.tsx
+new file mode 100644
+index 0000000..7f9abd3
+--- /dev/null
++++ b/src/screens/bookmark/index.tsx
+@@ -0,0 +1,17 @@
++import { View, Text } from "react-native";
++import { useContext, useEffect, useRef, useState } from "react";
++
++
++import styles from "./styles";
++
++export default function BookmarkScreen() {
++  useEffect(() => {
++    
++  }, []);
++
++  return (
++  	<View style={styles.container}>
++  		<Text>Bookmarks</Text>
++  	</View>
++  );
++}
+\ No newline at end of file
+diff --git a/src/screens/bookmark/styles.ts b/src/screens/bookmark/styles.ts
+new file mode 100644
+index 0000000..09be1bc
+--- /dev/null
++++ b/src/screens/bookmark/styles.ts
+@@ -0,0 +1,13 @@
++import { StyleSheet } from "react-native";
++
++const styles = StyleSheet.create({
++  container: { 
++    flex: 1,
++    display: 'flex',
++    justifyContent: 'center',
++    alignItems: 'center',
++    backgroundColor: 'black',
++  },
++});
++
++export default styles;
+diff --git a/src/screens/discover/index.tsx b/src/screens/discover/index.tsx
+new file mode 100644
+index 0000000..db6df7b
+--- /dev/null
++++ b/src/screens/discover/index.tsx
+@@ -0,0 +1,17 @@
++import { View, Text } from "react-native";
++import { useContext, useEffect, useRef, useState } from "react";
++
++
++import styles from "./styles";
++
++export default function DiscoverScreen() {
++  useEffect(() => {
++    
++  }, []);
++
++  return (
++  	<View style={styles.container}>
++  		<Text>Discover</Text>
++  	</View>
++  );
++}
+\ No newline at end of file
+diff --git a/src/screens/discover/styles.ts b/src/screens/discover/styles.ts
+new file mode 100644
+index 0000000..09be1bc
+--- /dev/null
++++ b/src/screens/discover/styles.ts
+@@ -0,0 +1,13 @@
++import { StyleSheet } from "react-native";
++
++const styles = StyleSheet.create({
++  container: { 
++    flex: 1,
++    display: 'flex',
++    justifyContent: 'center',
++    alignItems: 'center',
++    backgroundColor: 'black',
++  },
++});
++
++export default styles;
+diff --git a/src/screens/feed/index.tsx b/src/screens/feed/index.tsx
+new file mode 100644
+index 0000000..fdd12f8
+--- /dev/null
++++ b/src/screens/feed/index.tsx
+@@ -0,0 +1,151 @@
++import { 
++  FlatList, 
++  View,
++  Text,
++  Image,
++  TouchableOpacity,
++  Dimensions,  
++} from "react-native";
++import { useContext, useEffect, useRef, useState } from "react";
++import { RouteProp } from "@react-navigation/native";
++import { useSafeAreaInsets } from "react-native-safe-area-context";
++import AsyncStorage from '@react-native-async-storage/async-storage';
++
++import { RootStackParamList } from "../../navigation/main";
++import { HomeStackParamList } from "../../navigation/home";
++import { getPost } from "../../services/post";
++import PostSingle from "../../components/post";
++
++import styles from "./styles";
++
++
++type FeedScreenRouteProp =
++  | RouteProp<RootStackParamList, "userPosts">
++  | RouteProp<HomeStackParamList, "feed">;
++
++
++export default function FeedScreen({ route }: { route: FeedScreenRouteProp }) {
++  const [timeSeconds, setTimeSeconds] = useState(0);
++  const [post, setPost] = useState(undefined);
++  const [posts, setPosts] = useState([]);
++
++  const getTimeSpent = async () => {
++    try {
++      const value = await AsyncStorage.getItem('user_spent_time');
++      if (value && parseInt(value)) {
++        setTimeSeconds(parseInt(value));
++      }
++    } catch (error) {
++      console.log('getTimeSpent error', error);
++    }
++  };
++
++  useEffect(() => {
++    getPost()
++      .then((post) => {
++        setPost(post);
++        setPosts([post]);
++      })
++      .catch((error) => {
++        console.log('getPost error', error);
++      });
++
++    getTimeSpent();    
++  }, []);
++
++  useEffect(() => {
++    const intervalId = setInterval(() => {
++      setTimeSeconds(prev => prev + 1);
++    }, 1000);
++
++    return async () => {
++      clearInterval(intervalId);
++
++      try {
++        await AsyncStorage.setItem('user_spent_time', timeSeconds.toString());
++      }
++      catch (error) {
++
++      }
++    };
++  }, []);
++
++  const timerLabel = () => {
++    if (timeSeconds < 60) {
++      return `${timeSeconds}s`;
++    }
++    else if (timeSeconds < 3600) {
++      return `${parseInt(timeSeconds/60)}m`;
++    }
++    else {
++      return `${parseInt(timeSeconds/3600)}h`;
++    }
++  };
++
++  const useMaterialNavBarHeight = () => {
++    const { bottom, top } = useSafeAreaInsets();
++
++    return bottom - Math.floor(top) + 104;
++  };
++  const feedItemHeight =
++    Dimensions.get("window").height - useMaterialNavBarHeight();
++
++  const renderItem = ({ item, index }: { item: Post; index: number }) => {
++    return (
++      <View
++        style={{
++          height: feedItemHeight,
++          backgroundColor: "black",
++        }}
++      >
++        <PostSingle
++          item={item}
++        />
++      </View>
++    );
++  };
++
++  return (
++  	<View style={styles.container}>
++      <View style={[styles.topBar, { top: useSafeAreaInsets().top }]}>
++        <View style={styles.topBarTimer}>
++          <Image
++            style={styles.timerIcon}
++            resizeMode="contain"
++            source={require('../../../assets/timer.png')}
++          />
++          <Text style={styles.timerLabel}>{timerLabel()}</Text>
++        </View>
++
++        <View style={{ alignItems: "center", justifyContent: "center" }}>
++          <Text style={styles.topBarTitle}>For You</Text>
++          <View style={styles.topBarTitleLine}></View>
++        </View>
++
++        <TouchableOpacity
++          style={styles.searchButton}
++          onPress={() => {}}
++        >
++          <Image
++            style={styles.searchIcon}
++            resizeMode="contain"
++            source={require('../../../assets/search.png')}
++          />
++        </TouchableOpacity>        
++      </View>
++
++      <FlatList
++        data={posts}
++        removeClippedSubviews
++        viewabilityConfig={{
++          itemVisiblePercentThreshold: 0,
++        }}
++        renderItem={renderItem}
++        pagingEnabled
++        keyExtractor={(item) => item.id}
++        decelerationRate={"fast"}
++        // onViewableItemsChanged={onViewableItemsChanged.current}
++      />
++  	</View>
++  );
++}
+\ No newline at end of file
+diff --git a/src/screens/feed/styles.ts b/src/screens/feed/styles.ts
+new file mode 100644
+index 0000000..acd6a24
+--- /dev/null
++++ b/src/screens/feed/styles.ts
+@@ -0,0 +1,55 @@
++import { StyleSheet, Dimensions } from "react-native";
++
++const styles = StyleSheet.create({
++  container: { 
++    flex: 1,
++    backgroundColor: "black",
++  },
++  topBar: {
++    width: Dimensions.get("window").width,
++    height: 44,
++    position: "absolute",
++    zIndex: 999,
++    flex: 1,
++    flexDirection: "row",
++    justifyContent: "space-between",
++  },
++  topBarTimer: {
++    marginLeft: 12,
++    flexDirection: "row",
++    alignItems: "center",   
++    width: 50, 
++  },
++  timerIcon: {
++    width: 16,
++    height: 16,
++    marginRight: 2,
++  },
++  timerLabel: {
++    fontSize: 14,
++    fontWeight: "400",
++    color: "#FFFFFF99"
++  },
++  topBarTitle: {
++    color: "white",
++    fontSize: 16,
++    fontWeight: "600",
++  },
++  topBarTitleLine: {
++    backgroundColor: "white",
++    width: 30,
++    height: 4,
++    marginTop: 4,
++  },
++  searchButton: {
++    width: 55,
++    alignItems: "center",
++    justifyContent: "center",
++  },
++  searchIcon: {
++    width: 22,
++    height: 22,
++  },
++});
++
++export default styles;
+diff --git a/src/screens/profile/index.tsx b/src/screens/profile/index.tsx
+new file mode 100644
+index 0000000..4cb8c8c
+--- /dev/null
++++ b/src/screens/profile/index.tsx
+@@ -0,0 +1,17 @@
++import { View, Text } from "react-native";
++import { useContext, useEffect, useRef, useState } from "react";
++
++
++import styles from "./styles";
++
++export default function ProfileScreen() {
++  useEffect(() => {
++    
++  }, []);
++
++  return (
++  	<View style={styles.container}>
++  		<Text>Profile</Text>
++  	</View>
++  );
++}
+\ No newline at end of file
+diff --git a/src/screens/profile/styles.ts b/src/screens/profile/styles.ts
+new file mode 100644
+index 0000000..09be1bc
+--- /dev/null
++++ b/src/screens/profile/styles.ts
+@@ -0,0 +1,13 @@
++import { StyleSheet } from "react-native";
++
++const styles = StyleSheet.create({
++  container: { 
++    flex: 1,
++    display: 'flex',
++    justifyContent: 'center',
++    alignItems: 'center',
++    backgroundColor: 'black',
++  },
++});
++
++export default styles;
+diff --git a/src/services/post.ts b/src/services/post.ts
+new file mode 100644
+index 0000000..069f200
+--- /dev/null
++++ b/src/services/post.ts
+@@ -0,0 +1,28 @@
++import { Post } from "../types";
++
++
++export const getPost = (): Promise<Post> => {
++	return new Promise(async (resolve, reject) => {
++		fetch('https://cross-platform.rp.devfactory.com/for_you')
++			.then(response => response.json())
++			.then(json => {
++				resolve(json as Post);
++			})
++			.catch(error => {
++				reject(error);
++			});
++	});
++};
++
++export const getAnswerById = (id: number): Promise<Option[]> => {
++	return new Promise(async (resolve, reject) => {
++		fetch(`https://cross-platform.rp.devfactory.com/reveal?id=${id}`)
++			.then(response => response.json())
++			.then(json => {
++				resolve(json.correct_options as Option[]);
++			})
++			.catch(error => {
++				reject(error);
++			});
++	});
++};
+diff --git a/src/types/index.ts b/src/types/index.ts
+new file mode 100644
+index 0000000..d685a72
+--- /dev/null
++++ b/src/types/index.ts
+@@ -0,0 +1,18 @@
++export interface Post {
++  id: number;
++  type: string;
++  playlist: string;
++  description: string;
++  image: string;
++  question: string;
++  options: Option[];
++  user: {
++    name: string;
++    avatar: string;
++  }
++}
++
++export interface Option {
++  id: string;
++  answer: string;
++}
+\ No newline at end of file
